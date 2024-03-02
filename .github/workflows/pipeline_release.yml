@@ -48,5 +48,5 @@ jobs:
           push: true
           tags: |
             oussmess/account-opening:latest
-            oussmess/account-opening:${{ steps.get_latest_tag.outputs.TAG_NAME }}
+            oussmess/account-opening:${{ github.event.release.tag_name }}
       
