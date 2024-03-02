@@ -1,1 +1,9 @@
-
+# H2 Database Configuration
+spring:
+  r2dbc:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  flyway:
+    locations:
+      - classpath:db/migration
