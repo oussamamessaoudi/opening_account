@@ -46,4 +46,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: oussmess/account-opening:latest
+          tags: |
+            oussmess/account-opening:latest
+            oussmess/account-opening:${{ steps.version.outputs.RELEASE_VERSION }}
+      
