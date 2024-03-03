@@ -11,6 +11,6 @@ public class AccountsController {
   private AccountService accountService;
 
   public NewAccountCreatedDTO createAccount(NewAccountCreationDTO newAccountCreation) {
-    return accountService.createNewAccount(newAccountCreation);
+    return accountService.createAccountWithDeposit(newAccountCreation);
   }
 }

@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum CodeError {
   INTERNAL_ERROR("me.oussamamessaoudi.openingAccount.internalError"),
   CUSTOMER_NOT_FOUND("me.oussamamessaoudi.openingAccount.customerNotFound"),
-  ERROR_CREATING_TRANSACTION("me.oussamamessaoudi.openingAccount.errorCreatingTransaction");
+  ERROR_CREATING_TRANSACTION("me.oussamamessaoudi.openingAccount.errorCreatingTransaction"),
+  TRANSACTION_AMOUNT_INVALID("me.oussamamessaoudi.openingAccount.transactionAmountInvalid");
 
   private final String code;
 }

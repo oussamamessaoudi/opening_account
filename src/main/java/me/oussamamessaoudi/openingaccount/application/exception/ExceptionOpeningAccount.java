@@ -27,4 +27,16 @@ public class ExceptionOpeningAccount extends RuntimeException {
     this.params.add(value);
     return this;
   }
+
+  @Override
+  public String toString() {
+    return "ExceptionOpeningAccount{"
+        + "codeError="
+        + codeError
+        + ", httpStatus="
+        + httpStatus
+        + ", params="
+        + params
+        + '}';
+  }
 }

@@ -1,5 +1,7 @@
 package me.oussamamessaoudi.openingaccount.application.service;
 
+import jakarta.transaction.Transactional;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.oussamamessaoudi.openingaccount.application.domain.entity.Account;
@@ -24,18 +26,8 @@ public class AccountService {
 
   private AccountMapper accountMapper;
 
-  public NewAccountCreatedDTO createNewAccount(NewAccountCreationDTO newAccountCreation) {
-    return customerRepository
-        .getByCustomerId(newAccountCreation.getCustomerId())
-        .or(
-            () -> {
-              throw ExceptionOpeningAccount.builder()
-                  .codeError(CodeError.CUSTOMER_NOT_FOUND)
-                  .httpStatus(HttpStatus.NOT_FOUND.value())
-                  .build()
-                  .addParam(newAccountCreation.getCustomerId());
-            })
-        .map(customer -> accountRepository.save(Account.builder().customer(customer).build()))
+  public NewAccountCreatedDTO createAccountWithDeposit(NewAccountCreationDTO newAccountCreation) {
+    return createAccount(newAccountCreation)
         .map(
             account -> {
               try {
@@ -46,12 +38,27 @@ public class AccountService {
                         .label("Initial deposit")
                         .build());
               } catch (Exception exceptionOpeningAccount) {
-                log.error("Creating transaction", exceptionOpeningAccount);
+                log.error(exceptionOpeningAccount.toString());
                 return account;
               }
             })
         .map(accountMapper::mapAccountToNewAccountCreatedDTO)
         .orElseThrow(
             () -> ExceptionOpeningAccount.builder().codeError(CodeError.INTERNAL_ERROR).build());
+  }
+
+  @Transactional
+  public Optional<Account> createAccount(NewAccountCreationDTO newAccountCreation) {
+    return customerRepository
+        .getByCustomerId(newAccountCreation.getCustomerId())
+        .or(
+            () -> {
+              throw ExceptionOpeningAccount.builder()
+                  .codeError(CodeError.CUSTOMER_NOT_FOUND)
+                  .httpStatus(HttpStatus.NOT_FOUND.value())
+                  .build()
+                  .addParam(newAccountCreation.getCustomerId());
+            })
+        .map(customer -> accountRepository.save(Account.builder().customer(customer).build()));
   }
 }

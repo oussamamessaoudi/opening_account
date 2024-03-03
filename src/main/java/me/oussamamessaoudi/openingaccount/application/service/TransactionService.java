@@ -1,6 +1,5 @@
 package me.oussamamessaoudi.openingaccount.application.service;
 
-import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -10,6 +9,7 @@ import me.oussamamessaoudi.openingaccount.application.domain.repository.AccountR
 import me.oussamamessaoudi.openingaccount.application.domain.repository.TransactionRepository;
 import me.oussamamessaoudi.openingaccount.application.exception.CodeError;
 import me.oussamamessaoudi.openingaccount.application.exception.ExceptionOpeningAccount;
+import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
 public class TransactionService {
@@ -22,8 +22,18 @@ public class TransactionService {
     return Optional.of(transactionToBeAdded)
         .filter(
             transaction ->
-                !BigDecimal.ZERO.equals(
-                    Optional.of(transaction).map(Transaction::getAmount).orElse(BigDecimal.ZERO)))
+                Optional.of(transaction)
+                        .map(Transaction::getAmount)
+                        .orElse(BigDecimal.ZERO)
+                        .signum()
+                    <= 0)
+        .or(
+            () -> {
+              throw ExceptionOpeningAccount.builder()
+                  .codeError(CodeError.ERROR_CREATING_TRANSACTION)
+                  .build()
+                  .addParam(transactionToBeAdded.getAmount());
+            })
         .map(transaction -> transactionRepository.save(transaction))
         .map(transaction -> accountRepository.updateBalance(transaction))
         .orElseThrow(
