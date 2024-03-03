@@ -13,6 +13,7 @@ import me.oussamamessaoudi.openingaccount.application.domain.repository.Transact
 import me.oussamamessaoudi.openingaccount.application.exception.CodeError;
 import me.oussamamessaoudi.openingaccount.application.exception.ExceptionOpeningAccount;
 import me.oussamamessaoudi.openingaccount.application.mapper.AccountMapper;
+import org.springframework.http.HttpStatus;
 
 
 import java.math.BigDecimal;
@@ -34,6 +35,7 @@ public class AccountService {
                 .or(() -> {
                     throw ExceptionOpeningAccount.builder()
                             .codeError(CodeError.CUSTOMER_NOT_FOUND)
+                            .httpStatus(HttpStatus.NOT_FOUND.value())
                             .build();
                 })
                 .map(customer -> accountRepository.save(Account.builder().customer(customer).build()))
