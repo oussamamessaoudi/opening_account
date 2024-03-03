@@ -21,8 +21,8 @@ public class TransactionService {
     @Transactional
     public Account createTransaction(Transaction transactionToBeAdded) {
         return Optional.of(transactionToBeAdded)
-                .filter(transaction -> BigDecimal.ZERO.equals(transaction.getAmount()))
-                .map(transaction -> transactionRepository.save(transactionToBeAdded))
+                .filter(transaction -> !BigDecimal.ZERO.equals(Optional.of(transaction).map(Transaction::getAmount).orElse(BigDecimal.ZERO)))
+                .map(transaction -> transactionRepository.save(transaction))
                 .map(transaction -> accountRepository.updateBalance(transaction))
                 .orElseThrow(() -> ExceptionOpeningAccount.builder()
                         .codeError(CodeError.ERROR_CREATING_TRANSACTION)

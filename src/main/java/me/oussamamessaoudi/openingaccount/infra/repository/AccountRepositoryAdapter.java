@@ -15,14 +15,15 @@ import java.math.BigDecimal;
 @Repository
 public interface AccountRepositoryAdapter extends AccountRepository, CrudRepository<Account, Long> {
 
-    @Modifying
-    @Query("UPDATE Account a SET a.balance = a.balance + :amount WHERE a.id = :accountId")
-    Account updateBalance(@Param("accountId") Long accountId, @Param("amount") BigDecimal amount);
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Account a SET a.balance = a.balance + CAST(:amount AS bigdecimal) WHERE a.id = :accountId")
+    int updateBalance(@Param("accountId") Long accountId, @Param("amount") BigDecimal amount);
 
     default Account updateBalance(Transaction transaction) {
         Long accountId = transaction.getAccount().getId();
         BigDecimal amount = transaction.getAmount();
-        return this.updateBalance(accountId, amount);
+        this.updateBalance(accountId, amount);
+        return this.findById(accountId).orElse(null);
     }
 
 }

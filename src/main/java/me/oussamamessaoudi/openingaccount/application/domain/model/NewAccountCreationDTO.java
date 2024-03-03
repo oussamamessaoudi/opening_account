@@ -10,6 +10,5 @@ public class NewAccountCreationDTO {
     private long customerId;
     private BigDecimal initialCredit;
 
-
 }
 

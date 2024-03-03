@@ -12,7 +12,7 @@ import lombok.*;
 public class Customer {
     @Id
     @Column
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
 
     @Column

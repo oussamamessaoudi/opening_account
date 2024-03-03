@@ -12,6 +12,7 @@ import me.oussamamessaoudi.openingaccount.application.domain.repository.Customer
 import me.oussamamessaoudi.openingaccount.application.domain.repository.TransactionRepository;
 import me.oussamamessaoudi.openingaccount.application.exception.CodeError;
 import me.oussamamessaoudi.openingaccount.application.exception.ExceptionOpeningAccount;
+import me.oussamamessaoudi.openingaccount.application.mapper.AccountMapper;
 
 
 import java.math.BigDecimal;
@@ -26,7 +27,8 @@ public class AccountService {
 
     private TransactionService transactionService;
 
-    @Transactional
+    private AccountMapper accountMapper;
+
     public NewAccountCreatedDTO createNewAccount(NewAccountCreationDTO newAccountCreation) {
         return customerRepository.getByCustomerId(newAccountCreation.getCustomerId())
                 .or(() -> {
@@ -42,18 +44,15 @@ public class AccountService {
                                 .amount(newAccountCreation.getInitialCredit())
                                 .label("Initial deposit")
                                 .build());
-                    } catch (ExceptionOpeningAccount exceptionOpeningAccount) {
+                    } catch (Exception exceptionOpeningAccount) {
                         log.error("Creating transaction", exceptionOpeningAccount);
                         return account;
                     }
                 })
-                .map(account -> NewAccountCreatedDTO.builder()
-                        .accountId(account.getId())
-                        .customerId(account.getCustomer().getCustomerId())
-                        .balance(account.getBalance())
-                        .build())
+                .map(accountMapper::mapAccountToNewAccountCreatedDTO)
                 .orElseThrow(() -> ExceptionOpeningAccount.builder()
                         .codeError(CodeError.INTERNAL_ERROR)
                         .build());
     }
+
 }

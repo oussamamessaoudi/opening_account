@@ -1,16 +1,16 @@
 CREATE TABLE customer
 (
-    customer_id SERIAL PRIMARY KEY,
+    customer_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(255),
     surname     VARCHAR(255)
 );
 
 CREATE TABLE account
 (
-    id          SERIAL PRIMARY KEY,
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     customer_id BIGINT,
     label       VARCHAR(255),
-    balance     NUMERIC(19, 2)
+    balance     DECIMAL(19, 2)
 );
 
 ALTER TABLE account
@@ -20,9 +20,9 @@ ALTER TABLE account
 
 CREATE TABLE transaction
 (
-    id         SERIAL PRIMARY KEY,
+    id         BIGINT AUTO_INCREMENT  PRIMARY KEY,
     account_id BIGINT,
-    amount     NUMERIC(19, 2),
+    amount     DECIMAL(19, 2),
     label      VARCHAR(255)
 );
 
