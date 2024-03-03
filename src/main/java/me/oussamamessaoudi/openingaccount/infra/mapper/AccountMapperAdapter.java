@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 
 @Mapper
 public interface AccountMapperAdapter extends AccountMapper {
-    @Mapping(target = "accountId", source = "id")
-    @Mapping(target = "customerId", source = "customer.customerId")
-    @Mapping(source = "balance", target = "balance")
-    NewAccountCreatedDTO mapAccountToNewAccountCreatedDTO(Account account);
+  @Mapping(target = "accountId", source = "id")
+  @Mapping(target = "customerId", source = "customer.customerId")
+  @Mapping(source = "balance", target = "balance")
+  NewAccountCreatedDTO mapAccountToNewAccountCreatedDTO(Account account);
 }

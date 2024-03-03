@@ -14,3 +14,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
+
+  messages:
+    basename: "bundles/messages"
+    useCodeAsDefaultMessage: true
+
+management.tracing.propagation.type: b3_multi

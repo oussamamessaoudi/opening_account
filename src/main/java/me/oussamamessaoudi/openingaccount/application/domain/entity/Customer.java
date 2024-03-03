@@ -10,15 +10,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Customer {
-    @Id
-    @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long customerId;
+  @Id
+  @Column
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long customerId;
 
-    @Column
-    private String name;
+  @Column private String name;
 
-    @Column
-    private String surname;
-
+  @Column private String surname;
 }

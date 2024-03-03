@@ -5,7 +5,6 @@ import me.oussamamessaoudi.openingaccount.application.domain.repository.Customer
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface CustomerRepositoryAdapter extends CustomerRepository, CrudRepository<Customer, Long> {
-}
+public interface CustomerRepositoryAdapter
+    extends CustomerRepository, CrudRepository<Customer, Long> {}

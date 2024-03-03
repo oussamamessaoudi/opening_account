@@ -5,8 +5,6 @@ import me.oussamamessaoudi.openingaccount.application.domain.repository.Transact
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface TransactionRepositoryAdapter extends TransactionRepository, CrudRepository<Transaction, Long> {
-
-}
+public interface TransactionRepositoryAdapter
+    extends TransactionRepository, CrudRepository<Transaction, Long> {}

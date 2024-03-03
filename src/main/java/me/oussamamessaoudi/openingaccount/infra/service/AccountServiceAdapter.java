@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AccountServiceAdapter extends AccountService {
-    public AccountServiceAdapter(CustomerRepository customerRepository, AccountRepository accountRepository, TransactionService transactionService, AccountMapper accountMapper) {
-        super(customerRepository, accountRepository, transactionService, accountMapper);
-    }
+  public AccountServiceAdapter(
+      CustomerRepository customerRepository,
+      AccountRepository accountRepository,
+      TransactionService transactionService,
+      AccountMapper accountMapper) {
+    super(customerRepository, accountRepository, transactionService, accountMapper);
+  }
 }

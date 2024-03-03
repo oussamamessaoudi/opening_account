@@ -10,15 +10,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/create-account")
 public class AccountControllerAdapter extends AccountsController {
-    public AccountControllerAdapter(AccountService accountService) {
-        super(accountService);
-    }
+  public AccountControllerAdapter(AccountService accountService) {
+    super(accountService);
+  }
 
-    @Override
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public NewAccountCreatedDTO createAccount(@RequestBody NewAccountCreationDTO newAccountCreation) {
-        return super.createAccount(newAccountCreation);
-    }
-
+  @Override
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public NewAccountCreatedDTO createAccount(@RequestBody NewAccountCreationDTO newAccountCreation) {
+    return super.createAccount(newAccountCreation);
+  }
 }

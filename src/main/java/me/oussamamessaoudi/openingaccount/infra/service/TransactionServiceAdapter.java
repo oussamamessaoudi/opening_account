@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TransactionServiceAdapter extends TransactionService {
-    public TransactionServiceAdapter(TransactionRepository transactionRepository, AccountRepository accountRepository) {
-        super(transactionRepository, accountRepository);
-    }
+  public TransactionServiceAdapter(
+      TransactionRepository transactionRepository, AccountRepository accountRepository) {
+    super(transactionRepository, accountRepository);
+  }
 }

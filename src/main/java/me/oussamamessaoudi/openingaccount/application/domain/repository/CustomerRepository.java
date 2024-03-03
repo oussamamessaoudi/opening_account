@@ -1,10 +1,8 @@
 package me.oussamamessaoudi.openingaccount.application.domain.repository;
 
+import java.util.Optional;
 import me.oussamamessaoudi.openingaccount.application.domain.entity.Customer;
 
-import java.util.Optional;
-
-
 public interface CustomerRepository {
-    Optional<Customer> getByCustomerId(Long id);
+  Optional<Customer> getByCustomerId(Long id);
 }

@@ -8,8 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @AllArgsConstructor
 public class OpeningAccountApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(OpeningAccountApplication.class, args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication.run(OpeningAccountApplication.class, args);
+  }
 }

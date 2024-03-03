@@ -8,10 +8,9 @@ import me.oussamamessaoudi.openingaccount.application.service.AccountService;
 @AllArgsConstructor
 public class AccountsController {
 
-    private AccountService accountService;
+  private AccountService accountService;
 
-    public NewAccountCreatedDTO createAccount(NewAccountCreationDTO newAccountCreation) {
-        return accountService.createNewAccount(newAccountCreation);
-    }
-
+  public NewAccountCreatedDTO createAccount(NewAccountCreationDTO newAccountCreation) {
+    return accountService.createNewAccount(newAccountCreation);
+  }
 }
