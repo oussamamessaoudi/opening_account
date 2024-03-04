@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
-import me.oussamamessaoudi.openingaccount.application.exception.ExceptionOpeningAccount;
+import me.oussamamessaoudi.openingaccount.application.exception.OpeningAccountException;
 import me.oussamamessaoudi.openingaccount.application.exception.ProblemRest;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatusCode;
@@ -22,8 +22,8 @@ public class ExceptionHandlers {
   private final MessageSource messageSource;
   private final Tracer tracer;
 
-  @ExceptionHandler(ExceptionOpeningAccount.class)
-  public ResponseEntity<ProblemRest> handleExceptionOpeningAccount(ExceptionOpeningAccount ex) {
+  @ExceptionHandler(OpeningAccountException.class)
+  public ResponseEntity<ProblemRest> handleExceptionOpeningAccount(OpeningAccountException ex) {
     var httpStatus = HttpStatusCode.valueOf(ex.getHttpStatus());
     String code = ex.getCodeError().getCode();
     return new ResponseEntity<>(

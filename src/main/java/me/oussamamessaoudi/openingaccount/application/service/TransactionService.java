@@ -8,7 +8,8 @@ import me.oussamamessaoudi.openingaccount.application.domain.entity.Transaction;
 import me.oussamamessaoudi.openingaccount.application.domain.repository.AccountRepository;
 import me.oussamamessaoudi.openingaccount.application.domain.repository.TransactionRepository;
 import me.oussamamessaoudi.openingaccount.application.exception.CodeError;
-import me.oussamamessaoudi.openingaccount.application.exception.ExceptionOpeningAccount;
+import me.oussamamessaoudi.openingaccount.application.exception.OpeningAccountException;
+import me.oussamamessaoudi.openingaccount.application.helpers.FaultTolerantFunction;
 import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
@@ -19,28 +20,35 @@ public class TransactionService {
 
   @Transactional
   public Account createTransaction(Transaction transactionToBeAdded) {
-    return Optional.of(transactionToBeAdded)
+    return Optional.ofNullable(transactionToBeAdded)
         .filter(
             transaction ->
                 Optional.of(transaction)
                         .map(Transaction::getAmount)
                         .orElse(BigDecimal.ZERO)
                         .signum()
-                    <= 0)
+                    > 0)
         .or(
             () -> {
-              throw ExceptionOpeningAccount.builder()
-                  .codeError(CodeError.ERROR_CREATING_TRANSACTION)
+              throw OpeningAccountException.builder()
+                  .codeError(CodeError.TRANSACTION_AMOUNT_INVALID)
                   .build()
-                  .addParam(transactionToBeAdded.getAmount());
+                  .addParam(
+                      Optional.ofNullable(transactionToBeAdded)
+                          .map(Transaction::getAmount)
+                          .orElse(null));
             })
-        .map(transaction -> transactionRepository.save(transaction))
-        .map(transaction -> accountRepository.updateBalance(transaction))
+        .map(FaultTolerantFunction.of(transactionRepository::save))
+        .map(FaultTolerantFunction.of(accountRepository::updateBalance))
         .orElseThrow(
             () ->
-                ExceptionOpeningAccount.builder()
+                OpeningAccountException.builder()
                     .codeError(CodeError.ERROR_CREATING_TRANSACTION)
                     .build()
-                    .addParam(transactionToBeAdded.getAccount().getId()));
+                    .addParam(
+                        Optional.of(transactionToBeAdded)
+                            .map(Transaction::getAccount)
+                            .map(Account::getId)
+                            .orElse(null)));
   }
 }
