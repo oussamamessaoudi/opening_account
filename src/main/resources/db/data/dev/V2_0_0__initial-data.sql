@@ -1,0 +1,1 @@
+INSERT INTO CUSTOMER (name, surname) VALUES ('Oussama', 'Messaoudi');
