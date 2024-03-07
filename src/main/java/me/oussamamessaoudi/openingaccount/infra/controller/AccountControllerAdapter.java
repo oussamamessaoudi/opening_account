@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/create-account")
+@RequestMapping("/api/account")
 public class AccountControllerAdapter extends AccountsController {
   public AccountControllerAdapter(AccountService accountService) {
     super(accountService);

@@ -5,13 +5,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import me.oussamamessaoudi.openingaccount.application.domain.entity.Account;
 import me.oussamamessaoudi.openingaccount.application.domain.entity.Customer;
 import me.oussamamessaoudi.openingaccount.application.domain.model.NewAccountCreatedDTO;
 import me.oussamamessaoudi.openingaccount.application.domain.model.NewAccountCreationDTO;
 import me.oussamamessaoudi.openingaccount.application.domain.repository.AccountRepository;
-import me.oussamamessaoudi.openingaccount.application.domain.repository.CustomerRepository;
 import me.oussamamessaoudi.openingaccount.application.exception.CodeError;
 import me.oussamamessaoudi.openingaccount.application.exception.OpeningAccountException;
 import me.oussamamessaoudi.openingaccount.application.mapper.AccountMapper;
@@ -26,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class AccountServiceTest {
 
-  @Mock CustomerRepository customerRepository;
+  @Mock CustomerService customerService;
   @Mock private AccountRepository accountRepository;
   @Mock private TransactionService transactionService;
   @Mock private AccountMapper accountMapper;
@@ -34,27 +32,8 @@ class AccountServiceTest {
   @InjectMocks AccountService accountService;
 
   @Test
-  void createAccount_CustomerServiceUnavailable_throwException() {
-    Mockito.when(customerRepository.getByCustomerId(anyLong())).thenThrow(new RuntimeException());
-
-    var ex =
-        assertThrows(
-            OpeningAccountException.class,
-            () ->
-                accountService.createAccount(
-                    NewAccountCreationDTO.builder()
-                        .customerId(12)
-                        .initialCredit(BigDecimal.TEN)
-                        .build()));
-    Assertions.assertAll(
-        () -> assertEquals(CodeError.CUSTOMER_SERVICE_UNAVAILABLE, ex.getCodeError()),
-        () -> assertEquals(500, ex.getHttpStatus()),
-        () -> assertNull(ex.getParams()));
-  }
-
-  @Test
   void createAccount_CustomerNotFound_throwException() {
-    Mockito.when(customerRepository.getByCustomerId(anyLong())).thenReturn(Optional.empty());
+    Mockito.when(customerService.checkCustomerExistence(anyLong())).thenReturn(false);
 
     var ex =
         assertThrows(
@@ -74,9 +53,7 @@ class AccountServiceTest {
 
   @Test
   void createAccount_AccountServiceUnavailable_throwException() {
-    Mockito.when(customerRepository.getByCustomerId(anyLong()))
-        .thenReturn(
-            Optional.of(Customer.builder().customerId(12L).name("test").surname("test").build()));
+    Mockito.when(customerService.checkCustomerExistence(anyLong())).thenReturn(true);
 
     Mockito.when(accountRepository.save(any())).thenThrow(new RuntimeException());
 
@@ -99,10 +76,10 @@ class AccountServiceTest {
   @Test
   void createAccount_CustomerExistsServicesAvailable_valid() {
     Customer customer = Customer.builder().customerId(12L).name("test").surname("test").build();
-    Mockito.when(customerRepository.getByCustomerId(anyLong())).thenReturn(Optional.of(customer));
+    Mockito.when(customerService.checkCustomerExistence(anyLong())).thenReturn(true);
 
     Mockito.when(accountRepository.save(any()))
-        .thenReturn(Account.builder().id(33L).customer(customer).balance(BigDecimal.ZERO).build());
+        .thenReturn(Account.builder().id(33L).customerId(12L).balance(BigDecimal.ZERO).build());
 
     var account =
         accountService.createAccount(
@@ -110,17 +87,17 @@ class AccountServiceTest {
     Assertions.assertAll(
         () -> assertTrue(account.isPresent()),
         () -> assertEquals(33, account.get().getId()),
-        () -> assertEquals(12L, account.get().getCustomer().getCustomerId()),
+        () -> assertEquals(12L, account.get().getCustomerId()),
         () -> assertEquals(BigDecimal.ZERO, account.get().getBalance()));
   }
 
   @Test
   void createAccountWithDeposit_CustomerExistsWithValidDeposit_valid() {
     Customer customer = Customer.builder().customerId(12L).name("test").surname("test").build();
-    Mockito.when(customerRepository.getByCustomerId(anyLong())).thenReturn(Optional.of(customer));
+    Mockito.when(customerService.checkCustomerExistence(anyLong())).thenReturn(true);
 
     Mockito.when(accountRepository.save(any()))
-        .thenReturn(Account.builder().id(33L).customer(customer).balance(BigDecimal.ZERO).build());
+        .thenReturn(Account.builder().id(33L).customerId(12L).balance(BigDecimal.ZERO).build());
 
     Mockito.when(transactionService.createTransaction(any()))
         .thenReturn(Account.builder().balance(BigDecimal.TEN).build());
@@ -145,10 +122,10 @@ class AccountServiceTest {
   @Test
   void createAccountWithDeposit_CustomerExistsWithInvalidDeposit_valid() {
     Customer customer = Customer.builder().customerId(12L).name("test").surname("test").build();
-    Mockito.when(customerRepository.getByCustomerId(anyLong())).thenReturn(Optional.of(customer));
+    Mockito.when(customerService.checkCustomerExistence(anyLong())).thenReturn(true);
 
     Mockito.when(accountRepository.save(any()))
-        .thenReturn(Account.builder().id(33L).customer(customer).balance(BigDecimal.ZERO).build());
+        .thenReturn(Account.builder().id(33L).customerId(12L).balance(BigDecimal.ZERO).build());
 
     Mockito.when(transactionService.createTransaction(any())).thenThrow(new RuntimeException());
 
@@ -172,10 +149,10 @@ class AccountServiceTest {
   @Test
   void createAccountWithDeposit_accountNotCreatedDueToInternalError_valid() {
     Customer customer = Customer.builder().customerId(12L).name("test").surname("test").build();
-    Mockito.when(customerRepository.getByCustomerId(anyLong())).thenReturn(Optional.of(customer));
+    Mockito.when(customerService.checkCustomerExistence(anyLong())).thenReturn(true);
 
     Mockito.when(accountRepository.save(any()))
-        .thenReturn(Account.builder().id(33L).customer(customer).balance(BigDecimal.ZERO).build());
+        .thenReturn(Account.builder().id(33L).customerId(12L).balance(BigDecimal.ZERO).build());
 
     Mockito.when(transactionService.createTransaction(any())).thenThrow(new RuntimeException());
 

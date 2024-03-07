@@ -1,11 +1,11 @@
 package me.oussamamessaoudi.openingaccount.application.domain.entity;
 
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.*;
 
 @Table
-@Getter
-@Setter
+@Data
 @Entity
 @Builder
 @NoArgsConstructor
@@ -19,4 +19,8 @@ public class Customer {
   @Column private String name;
 
   @Column private String surname;
+
+  @EqualsAndHashCode.Exclude
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "customerId")
+  private Set<Account> accounts;
 }
