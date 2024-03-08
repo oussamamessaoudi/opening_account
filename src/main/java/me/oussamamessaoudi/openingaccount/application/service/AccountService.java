@@ -10,7 +10,6 @@ import me.oussamamessaoudi.openingaccount.application.domain.entity.Transaction;
 import me.oussamamessaoudi.openingaccount.application.domain.model.NewAccountCreatedDTO;
 import me.oussamamessaoudi.openingaccount.application.domain.model.NewAccountCreationDTO;
 import me.oussamamessaoudi.openingaccount.application.domain.repository.AccountRepository;
-import me.oussamamessaoudi.openingaccount.application.domain.repository.CustomerRepository;
 import me.oussamamessaoudi.openingaccount.application.exception.CodeError;
 import me.oussamamessaoudi.openingaccount.application.exception.OpeningAccountException;
 import me.oussamamessaoudi.openingaccount.application.helpers.FaultTolerantFunction;
@@ -21,9 +20,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public class AccountService {
 
-  private CustomerRepository customerRepository;
   private AccountRepository accountRepository;
 
+  private CustomerService customerService;
   private TransactionService transactionService;
 
   private AccountMapper accountMapper;
@@ -49,15 +48,7 @@ public class AccountService {
   public Optional<Account> createAccount(NewAccountCreationDTO newAccountCreation) {
     return Optional.of(newAccountCreation)
         .map(NewAccountCreationDTO::getCustomerId)
-        .map(
-            FaultTolerantFunction.of(
-                customerRepository::getByCustomerId,
-                (id) -> {
-                  throw OpeningAccountException.builder()
-                      .codeError(CodeError.CUSTOMER_SERVICE_UNAVAILABLE)
-                      .build();
-                }))
-        .flatMap(Function.identity())
+        .filter(customerService::checkCustomerExistence)
         .or(
             () -> {
               throw OpeningAccountException.builder()
@@ -66,7 +57,7 @@ public class AccountService {
                   .build()
                   .addParam(newAccountCreation.getCustomerId());
             })
-        .map(customer -> Account.builder().customer(customer).build())
+        .map(customerId -> Account.builder().customerId(customerId).build())
         .map(FaultTolerantFunction.of(accountRepository::save))
         .or(
             () -> {
