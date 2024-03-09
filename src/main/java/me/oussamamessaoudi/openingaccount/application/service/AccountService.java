@@ -1,6 +1,7 @@
 package me.oussamamessaoudi.openingaccount.application.service;
 
 import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import java.util.Optional;
 import java.util.function.Function;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class AccountService {
 
   private AccountMapper accountMapper;
 
+  @Transactional(TxType.NEVER)
   public NewAccountCreatedDTO createAccountWithDeposit(NewAccountCreationDTO newAccountCreation) {
     return createAccount(newAccountCreation)
         .map(
@@ -44,7 +46,7 @@ public class AccountService {
             () -> OpeningAccountException.builder().codeError(CodeError.INTERNAL_ERROR).build());
   }
 
-  @Transactional
+  @Transactional(TxType.REQUIRES_NEW)
   public Optional<Account> createAccount(NewAccountCreationDTO newAccountCreation) {
     return Optional.of(newAccountCreation)
         .map(NewAccountCreationDTO::getCustomerId)

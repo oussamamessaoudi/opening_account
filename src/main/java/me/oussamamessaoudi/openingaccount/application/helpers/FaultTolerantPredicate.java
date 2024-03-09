@@ -11,10 +11,6 @@ public class FaultTolerantPredicate<T> implements Predicate<T> {
   private final Predicate<T> predicate;
   private final Predicate<T> fallbackPredicate;
 
-  public static <T> FaultTolerantPredicate<T> of(Predicate<T> predicate) {
-    return new FaultTolerantPredicate<>(predicate, t -> false);
-  }
-
   public static <T> FaultTolerantPredicate<T> of(
       Predicate<T> function, Predicate<T> fallbackFunction) {
     return new FaultTolerantPredicate<>(function, fallbackFunction);

@@ -1,5 +1,6 @@
 package me.oussamamessaoudi.openingaccount.application.service;
 
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,6 @@ import me.oussamamessaoudi.openingaccount.application.domain.repository.Transact
 import me.oussamamessaoudi.openingaccount.application.exception.CodeError;
 import me.oussamamessaoudi.openingaccount.application.exception.OpeningAccountException;
 import me.oussamamessaoudi.openingaccount.application.helpers.FaultTolerantFunction;
-import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
 public class TransactionService {
@@ -18,7 +18,7 @@ public class TransactionService {
   private TransactionRepository transactionRepository;
   private AccountRepository accountRepository;
 
-  @Transactional
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public Account createTransaction(Transaction transactionToBeAdded) {
     return Optional.ofNullable(transactionToBeAdded)
         .filter(
