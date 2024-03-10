@@ -1,5 +1,6 @@
 plugins {
     id "java"
+    id "jacoco"
     id "org.springframework.boot" version "3.2.3"
     id "io.spring.dependency-management" version "1.1.4"
     id "com.diffplug.spotless" version "6.25.0"
@@ -47,6 +48,7 @@ dependencies {
     testImplementation "org.junit.platform:junit-platform-suite"
     testImplementation "io.cucumber:cucumber-junit-platform-engine:${cucumberVersion}"
 }
+
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
@@ -67,5 +69,16 @@ compileJava {
 }
 
 test {
+    finalizedBy jacocoTestReport
     useJUnitPlatform()
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = true
+        xml.outputLocation = layout.buildDirectory.file('reports/jacoco/code-coverage/result.xml')
+    }
 }

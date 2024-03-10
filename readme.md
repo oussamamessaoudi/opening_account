@@ -56,7 +56,7 @@ curl http://localhost:8080/api/customer?id=1 | jq .
 To create a new account:
 ```sh
 curl -X POST -H "Content-Type: application/json" -d '{
-  "customerId": 1,
-  "initialCredit": 100
+  "customerId": 2,
+  "initialCredit": -100
 }' http://localhost:8080/api/account | jq .
 ```
